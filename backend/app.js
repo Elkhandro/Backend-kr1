@@ -1,123 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const { nanoid } = require("nanoid");
-
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
 const app = express();
 const port = 3000;
-
-/**
- * @swagger
- * components:
- *   schemas:
- *     Product:
- *       type: object
- *       required:
- *         - name
- *         - category
- *         - description
- *         - price
- *         - stock
- *       properties:
- *         id:
- *           type: string
- *           description: Автоматически сгенерированный уникальный ID товара
- *           example: "abc123xyz"
- *         name:
- *           type: string
- *           description: Название товара
- *           example: "Футбольный мяч"
- *         category:
- *           type: string
- *           description: Категория товара
- *           example: "Мячи"
- *         description:
- *           type: string
- *           description: Подробное описание товара
- *           example: "Мяч Лиги чемпионов сезона 23\24"
- *         price:
- *           type: number
- *           description: Цена товара в рублях
- *           example: 9990
- *         stock:
- *           type: integer
- *           description: Количество товара на складе
- *           example: 5
- *         rating:
- *           type: number
- *           description: Рейтинг товара (0-5)
- *           example: 4.9
- *         image:
- *           type: string
- *           description: URL изображения товара
- *           example: "/images/products/macbook-pro.jpg"
- *
- *     Error:
- *       type: object
- *       properties:
- *         success:
- *           type: boolean
- *           example: false
- *         error:
- *           type: string
- *           example: "Product not found"
- *
- *     SuccessResponse:
- *       type: object
- *       properties:
- *         success:
- *           type: boolean
- *           example: true
- *         data:
- *           type: object
- *         message:
- *           type: string
- *           example: "Товар успешно создан"
- *
- *   securitySchemes:
- *     ApiKeyAuth:
- *       type: apiKey
- *       in: header
- *       name: Authorization
- *
- * tags:
- *   - name: Products
- *     description: Управление товарами интернет-магазина
- *   - name: Stats
- *     description: Статистика магазина
- */
-
-/**
- * @swagger
- * info:
- *   title: API Интернет-магазина
- *   version: 1.0.0
- *   description: |
- *     Полноценное REST API для управления товарами интернет-магазина.
- *
- *     ## Возможности
- *     * Получение списка товаров с фильтрацией и сортировкой
- *     * Получение товара по ID
- *     * Создание нового товара
- *     * Обновление товара (полное и частичное)
- *     * Удаление товара
- *     * Статистика магазина
- *
- *   contact:
- *     name: Поддержка API
- *     email: support@example.com
- *   license:
- *     name: MIT
- *     url: https://opensource.org/licenses/MIT
- *
- * servers:
- *   - url: http://localhost:3000
- *     description: Локальный сервер разработки
- *   - url: https://api.example.com
- *     description: Продакшн сервер
- */
 
 const swaggerOptions = {
   definition: {
@@ -134,6 +22,106 @@ const swaggerOptions = {
         description: "Локальный сервер",
       },
     ],
+    components: {
+      schemas: {
+        Product: {
+          type: "object",
+          required: ["name", "category", "description", "price", "stock"],
+          properties: {
+            id: {
+              type: "string",
+              description: "Автоматически сгенерированный уникальный ID товара",
+              example: "abc123xyz",
+            },
+            name: {
+              type: "string",
+              description: "Название товара",
+              example: "Футбольный мяч",
+            },
+            category: {
+              type: "string",
+              description: "Категория товара",
+              example: "Мячи",
+            },
+            description: {
+              type: "string",
+              description: "Подробное описание товара",
+              example: "Мяч Лиги чемпионов сезона 23/24",
+            },
+            price: {
+              type: "number",
+              description: "Цена товара в рублях",
+              example: 9990,
+            },
+            stock: {
+              type: "integer",
+              description: "Количество товара на складе",
+              example: 5,
+            },
+            rating: {
+              type: "number",
+              description: "Рейтинг товара (0-5)",
+              example: 4.9,
+            },
+            image: {
+              type: "string",
+              description: "URL изображения товара",
+              example: "/images/products/ball.jpg",
+            },
+          },
+        },
+        Error: {
+          type: "object",
+          properties: {
+            success: {
+              type: "boolean",
+              example: false,
+            },
+            error: {
+              type: "string",
+              example: "Товар не найден",
+            },
+          },
+        },
+        SuccessResponse: {
+          type: "object",
+          properties: {
+            success: {
+              type: "boolean",
+              example: true,
+            },
+            data: {
+              type: "object",
+            },
+            message: {
+              type: "string",
+              example: "Товар успешно создан",
+            },
+          },
+        },
+      },
+      securitySchemes: {
+        ApiKeyAuth: {
+          type: "apiKey",
+          in: "header",
+          name: "Authorization",
+        },
+      },
+    },
+    tags: [
+      {
+        name: "Products",
+        description: "Управление товарами интернет-магазина",
+      },
+      {
+        name: "Stats",
+        description: "Статистика магазина",
+      },
+      {
+        name: "Info",
+        description: "Информация о API",
+      },
+    ],
   },
   apis: ["./app.js"],
 };
@@ -147,7 +135,6 @@ app.use(
     explorer: true,
     customCss: ".swagger-ui .topbar { display: none }",
     customSiteTitle: "API Интернет-магазина - Документация",
-    customfavIcon: "https://swagger.io/favicon.ico",
   }),
 );
 
@@ -162,15 +149,14 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Логирование запросов
 app.use((req, res, next) => {
   const start = Date.now();
-
   res.on("finish", () => {
     const duration = Date.now() - start;
     console.log(
       `[${new Date().toISOString()}] ${req.method} ${res.statusCode} ${req.path} - ${duration}ms`,
     );
-
     if (
       req.method === "POST" ||
       req.method === "PUT" ||
@@ -179,7 +165,6 @@ app.use((req, res, next) => {
       console.log("  Body:", req.body);
     }
   });
-
   next();
 });
 
@@ -188,7 +173,7 @@ let products = [
     id: nanoid(8),
     name: "Футбольный мяч",
     category: "Мячи",
-    description: "Мяч Лиги чемпионов сезона 23-24",
+    description: "Мяч Лиги чемпионов сезона 23/24",
     price: 9990,
     stock: 5,
     rating: 4.9,
@@ -196,20 +181,9 @@ let products = [
   },
   {
     id: nanoid(8),
-    name: "Футбольный мяч",
-    category: "Мячи",
-    description: "Мяч Лиги чемпионов сезона 22-23",
-    price: 8990,
-    stock: 12,
-    rating: 4.8,
-    image: "",
-  },
-  {
-    id: nanoid(8),
     name: "Мяч FIFA Pro 2024",
     category: "Мячи",
-    description:
-      "Официальный мяч Лиги Чемпионов, технология 3D-панелей, идеальный отскок на любом покрытии",
+    description: "Официальный мяч Лиги Чемпионов, технология 3D-панелей",
     price: 8990,
     stock: 8,
     rating: 4.7,
@@ -219,8 +193,7 @@ let products = [
     id: nanoid(8),
     name: "Бутсы Nike Mercurial Superfly 10",
     category: "Обувь",
-    description:
-      "Элитные бутсы для скорости, карбоновая подошва, технология Grip для максимального сцепления",
+    description: "Элитные бутсы для скорости, карбоновая подошва",
     price: 25990,
     stock: 6,
     rating: 4.9,
@@ -230,8 +203,7 @@ let products = [
     id: nanoid(8),
     name: "Форма Барселоны 2024/25",
     category: "Одежда",
-    description:
-      "Домашний комплект, технология Dri-FIT, оригинальные нашивки Ла Лиги и Лиги Чемпионов",
+    description: "Домашний комплект, технология Dri-FIT",
     price: 7990,
     stock: 15,
     rating: 4.9,
@@ -241,8 +213,7 @@ let products = [
     id: nanoid(8),
     name: "Щитки Adidas Predator",
     category: "Защита",
-    description:
-      "Легкие композитные щитки с анатомической формой, фиксация компрессионным рукавом",
+    description: "Легкие композитные щитки с анатомической формой",
     price: 3490,
     stock: 10,
     rating: 4.8,
@@ -252,8 +223,7 @@ let products = [
     id: nanoid(8),
     name: "Вратарские перчатки Reusch",
     category: "Защита",
-    description:
-      "Профессиональные перчатки с латексом Grip Silver, защита пальцев от переразгибания",
+    description: "Профессиональные перчатки с латексом Grip Silver",
     price: 6990,
     stock: 7,
     rating: 4.7,
@@ -263,8 +233,7 @@ let products = [
     id: nanoid(8),
     name: "Гетры футбольные Nike Strike",
     category: "Одежда",
-    description:
-      "Компрессионные гетры с зональной вентиляцией, встроенные карманы для щитков",
+    description: "Компрессионные гетры с зональной вентиляцией",
     price: 1990,
     stock: 20,
     rating: 4.9,
@@ -274,8 +243,7 @@ let products = [
     id: nanoid(8),
     name: "Сумка для бутс Adidas",
     category: "Сумки",
-    description:
-      "Водонепроницаемый отсек для обуви, вентилируемые вставки, отделение для формы",
+    description: "Водонепроницаемый отсек для обуви",
     price: 3990,
     stock: 25,
     rating: 4.8,
@@ -285,11 +253,20 @@ let products = [
     id: nanoid(8),
     name: "Футбольные ворота 3x2м",
     category: "Инвентарь",
-    description:
-      "Складные алюминиевые ворота, сетка в комплекте, сумка для переноски",
+    description: "Складные алюминиевые ворота",
     price: 18990,
     stock: 12,
     rating: 4.7,
+    image: "",
+  },
+  {
+    id: nanoid(8),
+    name: "Мяч Чемпионата Мира 2022",
+    category: "Мячи",
+    description: "Официальный мяч ЧМ-2022, технология Connected Ball",
+    price: 12990,
+    stock: 3,
+    rating: 5.0,
     image: "",
   },
 ];
@@ -357,6 +334,8 @@ function validateProduct(product, isPartial = false) {
   };
 }
 
+// ============ МАРШРУТЫ ============
+
 /**
  * @swagger
  * /:
@@ -368,19 +347,20 @@ function validateProduct(product, isPartial = false) {
  *         description: Информация о доступных эндпоинтах
  *         content:
  *           application/json:
- *             example:
- *               success: true
- *               message: API Интернет-магазина
- *               endpoints:
- *                 products:
- *                   getAll: GET /api/products
- *                   getById: GET /api/products/:id
- *                   create: POST /api/products
- *                   update: PUT /api/products/:id
- *                   patch: PATCH /api/products/:id
- *                   delete: DELETE /api/products/:id
- *                 stats: GET /api/stats
- *                 docs: GET /api-docs
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "API 2drots"
+ *                 endpoints:
+ *                   type: object
+ *                 docs:
+ *                   type: string
+ *                   example: "http://localhost:3000/api-docs"
  */
 app.get("/", (req, res) => {
   res.json({
@@ -396,8 +376,8 @@ app.get("/", (req, res) => {
         delete: "DELETE /api/products/:id",
       },
       stats: "GET /api/stats",
-      docs: "GET /api-docs",
     },
+    docs: "http://localhost:3000/api-docs",
   });
 });
 
@@ -406,45 +386,39 @@ app.get("/", (req, res) => {
  * /api/products:
  *   get:
  *     summary: Получить список всех товаров
- *     description: Возвращает список товаров с возможностью фильтрации и сортировки
  *     tags: [Products]
  *     parameters:
  *       - in: query
  *         name: category
  *         schema:
  *           type: string
- *         description: Фильтр по категории товара
- *         example: "Мячи"
+ *         description: Фильтр по категории
+ *         required: false
  *       - in: query
  *         name: minPrice
  *         schema:
  *           type: number
  *         description: Минимальная цена
- *         example: 10000
+ *         required: false
  *       - in: query
  *         name: maxPrice
  *         schema:
  *           type: number
  *         description: Максимальная цена
- *         example: 50000
+ *         required: false
  *       - in: query
  *         name: inStock
  *         schema:
  *           type: boolean
- *         description: Только товары в наличии
- *         example: true
+ *         description: Только в наличии
+ *         required: false
  *       - in: query
  *         name: sort
  *         schema:
  *           type: string
  *           enum: [price_asc, price_desc, rating, name]
- *         description: |
- *           Сортировка товаров:
- *           * `price_asc` - по возрастанию цены
- *           * `price_desc` - по убыванию цены
- *           * `rating` - по рейтингу
- *           * `name` - по названию
- *         example: "price_asc"
+ *         description: Сортировка
+ *         required: false
  *     responses:
  *       200:
  *         description: Успешный ответ со списком товаров
@@ -458,22 +432,15 @@ app.get("/", (req, res) => {
  *                   example: true
  *                 count:
  *                   type: integer
- *                   example: 5
+ *                   example: 10
  *                 data:
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/Product'
- *       500:
- *         description: Внутренняя ошибка сервера
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
  */
 app.get("/api/products", (req, res) => {
-  const { category, minPrice, maxPrice, inStock, sort } = req.query;
-
   let filteredProducts = [...products];
+  const { category, minPrice, maxPrice, inStock, sort } = req.query;
 
   if (category) {
     filteredProducts = filteredProducts.filter((p) =>
@@ -486,6 +453,7 @@ app.get("/api/products", (req, res) => {
       (p) => p.price >= Number(minPrice),
     );
   }
+
   if (maxPrice) {
     filteredProducts = filteredProducts.filter(
       (p) => p.price <= Number(maxPrice),
@@ -525,7 +493,6 @@ app.get("/api/products", (req, res) => {
  * /api/products/{id}:
  *   get:
  *     summary: Получить товар по ID
- *     description: Возвращает детальную информацию о конкретном товаре
  *     tags: [Products]
  *     parameters:
  *       - in: path
@@ -533,8 +500,7 @@ app.get("/api/products", (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *         description: Уникальный идентификатор товара
- *         example: "abc123xyz"
+ *         description: ID товара
  *     responses:
  *       200:
  *         description: Данные товара
@@ -545,6 +511,7 @@ app.get("/api/products", (req, res) => {
  *               properties:
  *                 success:
  *                   type: boolean
+ *                   example: true
  *                 data:
  *                   $ref: '#/components/schemas/Product'
  *       404:
@@ -569,7 +536,6 @@ app.get("/api/products/:id", (req, res) => {
  * /api/products:
  *   post:
  *     summary: Создать новый товар
- *     description: Добавляет новый товар в каталог
  *     tags: [Products]
  *     requestBody:
  *       required: true
@@ -586,32 +552,18 @@ app.get("/api/products/:id", (req, res) => {
  *             properties:
  *               name:
  *                 type: string
- *                 description: Название товара
- *                 example: "Новый товар"
  *               category:
  *                 type: string
- *                 description: Категория товара
- *                 example: "Обувь"
  *               description:
  *                 type: string
- *                 description: Описание товара
- *                 example: "Подробное описание нового товара"
  *               price:
  *                 type: number
- *                 description: Цена товара
- *                 example: 9990
  *               stock:
  *                 type: integer
- *                 description: Количество на складе
- *                 example: 10
  *               rating:
  *                 type: number
- *                 description: Рейтинг (опционально)
- *                 example: 4.5
  *               image:
  *                 type: string
- *                 description: URL изображения (опционально)
- *                 example: "/images/products/new-product.jpg"
  *     responses:
  *       201:
  *         description: Товар успешно создан
@@ -631,14 +583,7 @@ app.get("/api/products/:id", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 errors:
- *                   type: array
- *                   items:
- *                     type: string
+ *               $ref: '#/components/schemas/Error'
  */
 app.post("/api/products", (req, res) => {
   const validation = validateProduct(req.body);
@@ -657,7 +602,7 @@ app.post("/api/products", (req, res) => {
     price: Number(req.body.price),
     stock: Number(req.body.stock),
     rating: req.body.rating || 0,
-    image: req.body.image || "/images/products/default.jpg",
+    image: req.body.image || "",
   };
 
   products.push(newProduct);
@@ -674,7 +619,6 @@ app.post("/api/products", (req, res) => {
  * /api/products/{id}:
  *   put:
  *     summary: Полностью обновить товар
- *     description: Заменяет все поля товара новыми данными
  *     tags: [Products]
  *     parameters:
  *       - in: path
@@ -682,7 +626,6 @@ app.post("/api/products", (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *         description: ID товара
  *     requestBody:
  *       required: true
  *       content:
@@ -692,6 +635,17 @@ app.post("/api/products", (req, res) => {
  *     responses:
  *       200:
  *         description: Товар обновлен
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Product'
  *       400:
  *         description: Ошибка валидации
  *       404:
@@ -738,7 +692,6 @@ app.put("/api/products/:id", (req, res) => {
  * /api/products/{id}:
  *   patch:
  *     summary: Частично обновить товар
- *     description: Обновляет только указанные поля товара
  *     tags: [Products]
  *     parameters:
  *       - in: path
@@ -746,7 +699,6 @@ app.put("/api/products/:id", (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *         description: ID товара
  *     requestBody:
  *       required: true
  *       content:
@@ -771,6 +723,17 @@ app.put("/api/products/:id", (req, res) => {
  *     responses:
  *       200:
  *         description: Товар обновлен
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Product'
  *       400:
  *         description: Ошибка валидации
  *       404:
@@ -816,7 +779,6 @@ app.patch("/api/products/:id", (req, res) => {
  * /api/products/{id}:
  *   delete:
  *     summary: Удалить товар
- *     description: Удаляет товар из каталога
  *     tags: [Products]
  *     parameters:
  *       - in: path
@@ -824,12 +786,15 @@ app.patch("/api/products/:id", (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *         description: ID товара
  *     responses:
  *       204:
- *         description: Товар успешно удален (нет тела ответа)
+ *         description: Товар успешно удален
  *       404:
  *         description: Товар не найден
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 app.delete("/api/products/:id", (req, res) => {
   const exists = products.some((p) => p.id === req.params.id);
@@ -842,7 +807,6 @@ app.delete("/api/products/:id", (req, res) => {
   }
 
   products = products.filter((p) => p.id !== req.params.id);
-
   res.status(204).send();
 });
 
@@ -851,7 +815,6 @@ app.delete("/api/products/:id", (req, res) => {
  * /api/stats:
  *   get:
  *     summary: Получить статистику магазина
- *     description: Возвращает общую статистику по товарам в магазине
  *     tags: [Stats]
  *     responses:
  *       200:
@@ -868,18 +831,14 @@ app.delete("/api/products/:id", (req, res) => {
  *                   properties:
  *                     totalProducts:
  *                       type: integer
- *                       example: 5
  *                     totalStock:
  *                       type: integer
- *                       example: 46
  *                     averagePrice:
  *                       type: number
- *                       example: 117990
  *                     categories:
  *                       type: array
  *                       items:
  *                         type: string
- *                       example: ["Мячи, "Обувь", "Защита", "Инвентарь", "Сумки", "Одежда"]
  *                     cheapestProduct:
  *                       type: object
  *                       properties:
@@ -899,50 +858,50 @@ app.get("/api/stats", (req, res) => {
   const totalProducts = products.length;
   const totalStock = products.reduce((sum, p) => sum + p.stock, 0);
   const averagePrice =
-    products.reduce((sum, p) => sum + p.price, 0) / totalProducts;
+    totalProducts > 0
+      ? Math.round(
+          products.reduce((sum, p) => sum + p.price, 0) / totalProducts,
+        )
+      : 0;
   const categories = [...new Set(products.map((p) => p.category))];
-  const cheapestProduct = products.reduce(
-    (min, p) => (p.price < min.price ? p : min),
-    products[0],
-  );
-  const mostExpensiveProduct = products.reduce(
-    (max, p) => (p.price > max.price ? p : max),
-    products[0],
-  );
+  const cheapestProduct =
+    products.length > 0
+      ? products.reduce(
+          (min, p) => (p.price < min.price ? p : min),
+          products[0],
+        )
+      : null;
+  const mostExpensiveProduct =
+    products.length > 0
+      ? products.reduce(
+          (max, p) => (p.price > max.price ? p : max),
+          products[0],
+        )
+      : null;
 
   res.json({
     success: true,
     data: {
       totalProducts,
       totalStock,
-      averagePrice: Math.round(averagePrice),
+      averagePrice,
       categories,
-      cheapestProduct: {
-        name: cheapestProduct.name,
-        price: cheapestProduct.price,
-      },
-      mostExpensiveProduct: {
-        name: mostExpensiveProduct.name,
-        price: mostExpensiveProduct.price,
-      },
+      cheapestProduct: cheapestProduct
+        ? {
+            name: cheapestProduct.name,
+            price: cheapestProduct.price,
+          }
+        : null,
+      mostExpensiveProduct: mostExpensiveProduct
+        ? {
+            name: mostExpensiveProduct.name,
+            price: mostExpensiveProduct.price,
+          }
+        : null,
     },
   });
 });
 
-/**
- * @swagger
- * /404:
- *   get:
- *     summary: Несуществующий маршрут
- *     tags: [Errors]
- *     responses:
- *       404:
- *         description: Маршрут не найден
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- */
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -958,6 +917,7 @@ app.use((err, req, res, next) => {
   });
 });
 
+// ============ ЗАПУСК СЕРВЕРА ============
 app.listen(port, () => {
   console.log(`
     ========================================
@@ -978,5 +938,5 @@ app.listen(port, () => {
     
     Товаров в базе: ${products.length}
     ========================================
-    `);
+  `);
 });

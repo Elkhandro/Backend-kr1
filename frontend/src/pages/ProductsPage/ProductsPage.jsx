@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { api } from "../../api";
-import ProductList from "../../components/ProductList";
-import ProductForm from "../../components/ProductForm";
+import { api } from "../../api/index.js"; // или просто "../../api"
+import ProductsList from "../../components/ProductList";
+import ProductModal from "../../components/ProductForm";
 import "./ProductsPage.scss";
 
 export default function ProductsPage() {
@@ -21,24 +21,27 @@ export default function ProductsPage() {
 
   useEffect(() => {
     loadProducts();
-  }, [filters]);
+  }, []);
 
   useEffect(() => {
     loadStats();
   }, []);
 
-  const loadProducts = async () => {
+  const loadProducts = async (appliedFilters = filters) => {
     try {
       setLoading(true);
       const activeFilters = {};
-      if (filters.category) activeFilters.category = filters.category;
-      if (filters.minPrice) activeFilters.minPrice = filters.minPrice;
-      if (filters.maxPrice) activeFilters.maxPrice = filters.maxPrice;
-      if (filters.inStock) activeFilters.inStock = "true";
-      if (filters.sort) activeFilters.sort = filters.sort;
+      if (appliedFilters.category)
+        activeFilters.category = appliedFilters.category;
+      if (appliedFilters.minPrice)
+        activeFilters.minPrice = appliedFilters.minPrice;
+      if (appliedFilters.maxPrice)
+        activeFilters.maxPrice = appliedFilters.maxPrice;
+      if (appliedFilters.inStock) activeFilters.inStock = "true";
+      if (appliedFilters.sort) activeFilters.sort = appliedFilters.sort;
 
       const response = await api.getProducts(activeFilters);
-      setProducts(response.data);
+      setProducts(response.data || response);
     } catch (error) {
       console.error("Error loading products:", error);
       alert("Ошибка при загрузке товаров");
@@ -50,7 +53,7 @@ export default function ProductsPage() {
   const loadStats = async () => {
     try {
       const response = await api.getStats();
-      setStats(response.data);
+      setStats(response.data || response);
     } catch (error) {
       console.error("Error loading stats:", error);
     }
@@ -92,11 +95,13 @@ export default function ProductsPage() {
     try {
       if (modalMode === "create") {
         const response = await api.createProduct(productData);
-        setProducts((prev) => [...prev, response.data]);
+        setProducts((prev) => [...prev, response.data || response]);
       } else {
         const response = await api.updateProduct(productData.id, productData);
         setProducts((prev) =>
-          prev.map((p) => (p.id === productData.id ? response.data : p)),
+          prev.map((p) =>
+            p.id === productData.id ? response.data || response : p,
+          ),
         );
       }
       closeModal();
@@ -115,8 +120,20 @@ export default function ProductsPage() {
     }));
   };
 
+  const applyFilters = () => {
+    loadProducts(filters);
+  };
+
   const clearFilters = () => {
     setFilters({
+      category: "",
+      minPrice: "",
+      maxPrice: "",
+      inStock: false,
+      sort: "",
+    });
+
+    loadProducts({
       category: "",
       minPrice: "",
       maxPrice: "",
@@ -207,13 +224,18 @@ export default function ProductsPage() {
                 Только в наличии
               </label>
 
+              {/* Добавили кнопку "Применить" */}
+              <button className="btn btn--primary" onClick={applyFilters}>
+                Применить
+              </button>
+
               <button className="btn btn--secondary" onClick={clearFilters}>
                 Сбросить
               </button>
             </div>
           </div>
 
-          <ProductList
+          <ProductsList
             products={products}
             onEdit={openEditModal}
             onDelete={handleDelete}
@@ -231,7 +253,7 @@ export default function ProductsPage() {
         </div>
       </footer>
 
-      <ProductForm
+      <ProductModal
         open={modalOpen}
         mode={modalMode}
         initialProduct={editingProduct}

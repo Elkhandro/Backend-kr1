@@ -118,10 +118,11 @@ app.use((req, res) => {
 });
 
 app.listen(port, () => {
-  console.log("Сервер запущен на http://localhost:${port}");
-  console.log("Доступные маршруты:");
-  console.log("- GET    /products - получить все товары");
-  console.log("- GET    /products/id- получить товар по id");
-  console.log("- POST   /products - создать новый товар");
-  console.log("- DELETE /products/:id - удалить товар");
+  console.log(`Сервер запущен на http://localhost:${port}`);
+  console.log(`Доступные маршруты:`);
+  console.log(`- GET    /products           - получить все товары`);
+  console.log(`- GET    /products/:id       - получить товар по id`);
+  console.log(`- POST   /products           - создать новый товар`);
+  console.log(`- PATCH  /products/:id       - обновить товар`);
+  console.log(`- DELETE /products/:id       - удалить товар`);
 });
